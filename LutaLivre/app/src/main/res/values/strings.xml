@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Luta Livre</string>
+    <string name="mensagem">Welcome fighters!</string>
+    <string name="lutar">Lutar</string>
+</resources>
