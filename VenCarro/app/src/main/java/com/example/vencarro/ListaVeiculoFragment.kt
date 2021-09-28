@@ -24,6 +24,7 @@ import org.json.JSONObject
 class ListaVeiculoFragment : Fragment() {
 
     lateinit var binding:FragmentListaVeiculoBinding
+    lateinit var activityPrincipal: MainActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,9 @@ class ListaVeiculoFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.listaVeiculo.layoutManager = LinearLayoutManager(context!!)
-        binding.listaVeiculo.adapter = VeiculoAdapter(context!!)
+        activityPrincipal = activity as MainActivity
+        binding.listaVeiculo.adapter = VeiculoAdapter(context!!, activityPrincipal)
+        activityPrincipal = activity as MainActivity
     }
 
     override fun onCreateView(
@@ -54,7 +57,7 @@ class ListaVeiculoFragment : Fragment() {
 
     }
 
-    class VeiculoAdapter(context: Context):RecyclerView.Adapter<VeiculoHolder>(){
+    class VeiculoAdapter(context: Context, var activityPrincipal: MainActivity):RecyclerView.Adapter<VeiculoHolder>(){
 
         var veiculos = ArrayList<Veiculo>()
         var veiculoSelecionado = Veiculo()
@@ -147,6 +150,9 @@ class ListaVeiculoFragment : Fragment() {
                 null,
                 Response.Listener<JSONObject> { response ->
                     Log.i("PRECO", response.getString("Valor"))
+                    veiculoSelecionado.preco = response.getString("Valor")
+                    activityPrincipal.exibirResumo(veiculoSelecionado)
+
                 },
                 Response.ErrorListener { error ->  Log.e("CARRO", "ERRO: " + error.message)
                 }
@@ -176,6 +182,8 @@ class ListaVeiculoFragment : Fragment() {
                     veiculoSelecionado.modelo = veiculos.get(position).modelo
                     obterAnos(veiculoSelecionado.idMarca, veiculoSelecionado.idModelo)
                 } else if (veiculoSelecionado.idMarca != 0 && veiculoSelecionado.idModelo != 0 && veiculoSelecionado.idAno == "") {
+                    veiculoSelecionado.idAno = veiculos.get(position).idAno
+                    veiculoSelecionado.ano = veiculos.get(position).ano
                     obterPreco(veiculoSelecionado.idMarca, veiculoSelecionado.idModelo, veiculos.get(position).idAno)
                 }
             }
