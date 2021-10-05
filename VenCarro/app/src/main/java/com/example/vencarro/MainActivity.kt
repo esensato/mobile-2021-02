@@ -4,13 +4,17 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import com.example.vencarro.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding:ActivityMainBinding
+    lateinit var imagem:File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +50,15 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val imageBitmap = data?.extras?.get("data") as Bitmap
                 findViewById<ImageView>(R.id.imgFoto).setImageBitmap(imageBitmap)
+
+                this.imagem = File.createTempFile("TMP", ".jpg", cacheDir)
+                Log.i("Arquivo", applicationContext!!.filesDir.absoluteFile.absolutePath)
+                val output = FileOutputStream(this.imagem)
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                output.flush()
+                output.close()
+
             }
             super.onActivityResult(requestCode, resultCode, data)
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }
